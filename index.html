@@ -13,11 +13,31 @@
 }
 
 body{
-  background:#111;
-  color:white;
-  font-family:Arial,sans-serif;
   min-height:100vh;
   overflow:hidden;
+  font-family:Arial,sans-serif;
+  color:white;
+  background:
+    radial-gradient(circle at 20% 20%,#25203b 0%,transparent 35%),
+    radial-gradient(circle at 80% 80%,#172d3b 0%,transparent 35%),
+    linear-gradient(135deg,#090b12,#151522,#0a1118);
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.12) 1px,transparent 1px);
+  background-size:45px 45px;
+  opacity:.35;
+  animation:stars 12s linear infinite;
+}
+
+@keyframes stars{
+  from{transform:translateY(0)}
+  to{transform:translateY(-45px)}
 }
 
 .screen{
@@ -31,29 +51,30 @@ body{
 
 .card{
   width:min(520px,100%);
-  background:#1c1c1c;
-  border:1px solid #333;
-  border-radius:20px;
   padding:35px 25px;
   text-align:center;
-  box-shadow:0 15px 50px rgba(0,0,0,.5);
+  background:rgba(25,25,38,.92);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:24px;
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
+  backdrop-filter:blur(12px);
 }
 
 h1{
-  font-size:30px;
+  font-size:32px;
   margin-bottom:18px;
 }
 
 p{
   color:#ccc;
   line-height:1.6;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 
 button{
   border:0;
   border-radius:12px;
-  padding:14px 20px;
+  padding:14px 22px;
   margin:7px;
   background:#eee;
   color:#111;
@@ -63,12 +84,12 @@ button{
 }
 
 button:hover{
-  transform:scale(1.03);
+  transform:scale(1.04);
 }
 
 .start-btn{
-  margin-top:15px;
   width:80%;
+  margin-top:18px;
   font-weight:bold;
 }
 
@@ -81,69 +102,117 @@ button:hover{
   top:20px;
   left:50%;
   transform:translateX(-50%);
-  font-size:24px;
+  z-index:20;
+  font-size:25px;
   font-weight:bold;
-  z-index:10;
+  padding:8px 18px;
+  border-radius:14px;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);
 }
 
 #gameArea{
-  position:relative;
-  width:100vw;
-  height:100vh;
+  position:fixed;
+  inset:0;
 }
 
 #gift{
   position:absolute;
-  left:50%;
-  top:55%;
-  transform:translate(-50%,-50%) scale(1);
-  font-size:90px;
+  width:100px;
+  height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:78px;
   cursor:pointer;
   user-select:none;
-  transition:left .25s ease, top .25s ease, transform .25s ease;
-  z-index:3;
+  z-index:5;
+  transition:
+    left .35s cubic-bezier(.2,.8,.2,1),
+    top .35s cubic-bezier(.2,.8,.2,1),
+    transform .2s ease;
+  filter:drop-shadow(0 8px 15px rgba(0,0,0,.45));
+}
+
+#gift:hover{
+  transform:translate(-50%,-50%) scale(1.08);
+}
+
+#gift.shake{
+  animation:giftShake .25s ease;
+}
+
+@keyframes giftShake{
+  0%{transform:translate(-50%,-50%) scale(1)}
+  30%{transform:translate(-50%,-50%) scale(1.18) rotate(-8deg)}
+  60%{transform:translate(-50%,-50%) scale(.95) rotate(8deg)}
+  100%{transform:translate(-50%,-50%) scale(1)}
 }
 
 #bomb{
   position:absolute;
   display:none;
-  font-size:70px;
+  width:120px;
+  height:120px;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
   cursor:pointer;
   user-select:none;
-  z-index:5;
-  text-align:center;
+  z-index:10;
+  animation:bombAppear .3s ease,bombPulse 1s infinite;
+  filter:drop-shadow(0 0 18px rgba(255,50,50,.65));
 }
 
 #bombTimer{
   position:absolute;
-  top:-32px;
+  top:-8px;
   left:50%;
   transform:translateX(-50%);
   font-size:20px;
-  color:#ff4444;
+  color:#ff5555;
   font-weight:bold;
+  text-shadow:0 0 10px red;
+}
+
+@keyframes bombAppear{
+  from{
+    opacity:0;
+    transform:scale(.3);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+@keyframes bombPulse{
+  0%,100%{filter:drop-shadow(0 0 10px rgba(255,40,40,.5))}
+  50%{filter:drop-shadow(0 0 28px rgba(255,40,40,1))}
 }
 
 .overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.82);
   display:none;
   align-items:center;
   justify-content:center;
   z-index:50;
   padding:20px;
+  background:rgba(4,5,10,.82);
+  backdrop-filter:blur(8px);
 }
 
 .questionBox{
   width:min(600px,100%);
   max-height:90vh;
   overflow:auto;
-  background:#1d1d1d;
-  border:1px solid #444;
-  border-radius:20px;
   padding:30px 22px;
   text-align:center;
+  background:#1a1b28;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:22px;
+  box-shadow:0 20px 70px rgba(0,0,0,.6);
 }
 
 .questionBox h2{
@@ -159,13 +228,13 @@ button:hover{
 
 input,textarea{
   width:100%;
-  background:#111;
+  padding:14px;
+  margin:8px 0;
+  background:#0d0e16;
   color:white;
   border:1px solid #555;
   border-radius:10px;
-  padding:14px;
   font-size:16px;
-  margin:8px 0;
   outline:none;
 }
 
@@ -175,8 +244,8 @@ textarea{
 }
 
 .small{
-  font-size:13px;
   color:#999;
+  font-size:13px;
   margin-top:15px;
 }
 
@@ -188,31 +257,20 @@ textarea{
   margin:15px 0;
   font-size:22px;
 }
-
-.hidden{
-  display:none !important;
-}
 </style>
 </head>
 
 <body>
 
-<!-- BAŞLANGIÇ -->
 <div id="start" class="screen">
-
   <div class="card">
 
     <h1>Küçük Bir Oyun</h1>
 
     <p>Hediye kutusuna tıklaman gerekiyor.</p>
-
     <p>Bombaya tıklama. Gitmesini bekle.</p>
-
     <p>Sorular çıktığında cevapla.</p>
-
     <p>Ve dikkat et...</p>
-
-    <p>Ne kadar süreceğini sen de bilmiyorsun.</p>
 
     <p class="small">
       Oyunda verdiğin cevaplar, oyunun sonunda bu sürprizin sahibi tarafından görülebilir.
@@ -223,27 +281,20 @@ textarea{
     </button>
 
   </div>
-
 </div>
 
 
-<!-- OYUN -->
 <div id="game">
 
   <div id="top">02:00</div>
 
   <div id="gameArea">
 
-    <div id="gift" onclick="giftClick()">
-      🎁
-    </div>
+    <div id="gift" onclick="giftClick()">🎁</div>
 
     <div id="bomb" onclick="bombClicked()">
-
       <div id="bombTimer">5</div>
-
       💣
-
     </div>
 
   </div>
@@ -251,7 +302,6 @@ textarea{
 </div>
 
 
-<!-- SORU -->
 <div id="questionOverlay" class="overlay">
 
   <div class="questionBox">
@@ -265,7 +315,6 @@ textarea{
 </div>
 
 
-<!-- KAYBETTİN -->
 <div id="lose" class="overlay">
 
   <div class="card">
@@ -274,16 +323,13 @@ textarea{
 
     <p>Bombaya tıkladın.</p>
 
-    <button onclick="restartGame()">
-      Tekrar Dene
-    </button>
+    <button onclick="restartGame()">Tekrar Dene</button>
 
   </div>
 
 </div>
 
 
-<!-- FINAL -->
 <div id="final" class="overlay">
 
   <div class="card">
@@ -293,7 +339,6 @@ textarea{
     <h2>ANTİK BORDO BERELİ KUNDUZ BERNA</h2>
 
     <p>Küçük oyunu başarıyla tamamladın.</p>
-
     <p>Haftasonu görüşürüz (umarım)</p>
 
     <p class="small">
@@ -307,106 +352,261 @@ textarea{
 
 <script>
 
-
-/* =========================================================
+/* =====================================================
    GOOGLE APPS SCRIPT
-   ========================================================= */
+===================================================== */
 
 const APPS_SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbzASI45urei-jg2T9GouxPP0gUxnowf-p1pHpoZJwQw2a7__Mi98TEZFX8gXDCYAGN3WA/exec";
 
 
-/* =========================================================
-   OYUN AYARLARI
-   ========================================================= */
+/* =====================================================
+   AYARLAR
+===================================================== */
 
 const OYUN_SURESI = 120;
 
-const BOMBA_IHTIMALI = 0.16;
+/* Bomba çıkma ihtimali */
+const BOMBA_IHTIMALI = 0.15;
 
-const SORU_IHTIMALI = 0.18;
+/* Soru çıkma ihtimali */
+const SORU_IHTIMALI = 0.22;
 
 
-/* =========================================================
+/* =====================================================
    DEĞİŞKENLER
-   ========================================================= */
+===================================================== */
 
 let timeLeft = OYUN_SURESI;
-
 let timerInterval = null;
-
 let bombInterval = null;
 
 let bombCountdown = 5;
-
+let bombActive = false;
 let gameRunning = false;
 
 let answersData = {};
-
 let usedQuestions = [];
-
 let questionCount = 0;
 
-let bombActive = false;
+let lastGiftZone = -1;
 
 
-/* =========================================================
+/* =====================================================
+   SES SİSTEMİ
+===================================================== */
+
+let audioCtx = null;
+
+function initAudio(){
+
+  if(!audioCtx){
+    audioCtx =
+      new (window.AudioContext ||
+      window.webkitAudioContext)();
+  }
+
+  if(audioCtx.state==="suspended"){
+    audioCtx.resume();
+  }
+}
+
+
+function playSound(type){
+
+  try{
+
+    initAudio();
+
+    const osc =
+      audioCtx.createOscillator();
+
+    const gain =
+      audioCtx.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+
+    if(type==="click"){
+
+      osc.frequency.setValueAtTime(
+        520,
+        audioCtx.currentTime
+      );
+
+      osc.frequency.exponentialRampToValueAtTime(
+        760,
+        audioCtx.currentTime+.12
+      );
+
+      gain.gain.setValueAtTime(
+        .12,
+        audioCtx.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+.14
+      );
+
+      osc.start();
+      osc.stop(audioCtx.currentTime+.14);
+
+    }
+
+
+    if(type==="bomb"){
+
+      osc.type="sawtooth";
+
+      osc.frequency.setValueAtTime(
+        120,
+        audioCtx.currentTime
+      );
+
+      osc.frequency.exponentialRampToValueAtTime(
+        45,
+        audioCtx.currentTime+.5
+      );
+
+      gain.gain.setValueAtTime(
+        .18,
+        audioCtx.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+.5
+      );
+
+      osc.start();
+      osc.stop(audioCtx.currentTime+.5);
+
+    }
+
+
+    if(type==="lose"){
+
+      osc.type="sawtooth";
+
+      osc.frequency.setValueAtTime(
+        300,
+        audioCtx.currentTime
+      );
+
+      osc.frequency.exponentialRampToValueAtTime(
+        70,
+        audioCtx.currentTime+.5
+      );
+
+      gain.gain.setValueAtTime(
+        .2,
+        audioCtx.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+.6
+      );
+
+      osc.start();
+      osc.stop(audioCtx.currentTime+.6);
+
+    }
+
+
+    if(type==="success"){
+
+      osc.frequency.setValueAtTime(
+        500,
+        audioCtx.currentTime
+      );
+
+      osc.frequency.setValueAtTime(
+        700,
+        audioCtx.currentTime+.12
+      );
+
+      osc.frequency.setValueAtTime(
+        900,
+        audioCtx.currentTime+.24
+      );
+
+      gain.gain.setValueAtTime(
+        .14,
+        audioCtx.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+.5
+      );
+
+      osc.start();
+      osc.stop(audioCtx.currentTime+.5);
+
+    }
+
+  }catch(e){}
+
+}
+
+
+/* =====================================================
    SORULAR
-   ========================================================= */
+===================================================== */
 
 const questions = [
 
   {
     id:"colors",
-
     text:"En sevdiğin 3 rengi 1’den 3’e sırala.",
-
     type:"text",
-
-    placeholder:"Örnek: 1. Bordo  2. Siyah  3. Mor"
+    placeholder:"1. Bordo  2. Siyah  3. Mor"
   },
 
   {
     id:"characters",
-
     text:"Animasyon, film, dizi, oyun, kitap… fark etmez. En sevdiğin 5 kurgusal karakteri 1’den 5’e sırala.",
-
     type:"textarea",
-
     placeholder:
-      "1. karakter:\n2. karakter:\n3. karakter:\n4. karakter:\n5. karakter:"
+`1. karakter:
+2. karakter:
+3. karakter:
+4. karakter:
+5. karakter:`
   },
 
   {
     id:"littlePrince",
-
     text:"Sence aşağıdaki çizim neyi gösteriyor?",
-
     type:"prince"
   },
 
   {
     id:"number",
-
     text:"1 ile 10 arasında aklından bir sayı tut.",
-
     type:"number"
   }
 
 ];
 
 
-/* =========================================================
+/* =====================================================
    BAŞLAT
-   ========================================================= */
+===================================================== */
 
 function startGame(){
 
-  document.getElementById("start").style.display="none";
+  initAudio();
 
-  document.getElementById("game").style.display="block";
+  playSound("click");
 
   resetGame();
+
+  document.getElementById("start").style.display="none";
+  document.getElementById("game").style.display="block";
 
   gameRunning=true;
 
@@ -417,59 +617,50 @@ function startGame(){
 }
 
 
-/* =========================================================
+/* =====================================================
    RESET
-   ========================================================= */
+===================================================== */
 
 function resetGame(){
 
   clearInterval(timerInterval);
-
   clearInterval(bombInterval);
 
   timeLeft=OYUN_SURESI;
-
   bombCountdown=5;
 
+  bombActive=false;
+  gameRunning=false;
+
   answersData={};
-
   usedQuestions=[];
-
   questionCount=0;
 
-  bombActive=false;
-
-  gameRunning=false;
+  lastGiftZone=-1;
 
   document.getElementById("top").innerText="02:00";
 
-  document.getElementById("gift").style.display="block";
-
-  document.getElementById("gift").style.transform=
-    "translate(-50%,-50%) scale(1)";
-
+  document.getElementById("gift").style.display="flex";
   document.getElementById("bomb").style.display="none";
 
   document.getElementById("questionOverlay").style.display="none";
-
   document.getElementById("lose").style.display="none";
-
   document.getElementById("final").style.display="none";
 
 }
 
 
-/* =========================================================
+/* =====================================================
    TEKRAR
-   ========================================================= */
+===================================================== */
 
 function restartGame(){
 
   document.getElementById("lose").style.display="none";
 
-  document.getElementById("game").style.display="block";
-
   resetGame();
+
+  document.getElementById("game").style.display="block";
 
   gameRunning=true;
 
@@ -480,24 +671,29 @@ function restartGame(){
 }
 
 
-/* =========================================================
-   ZAMANLAYICI
-   ========================================================= */
+/* =====================================================
+   ZAMAN
+===================================================== */
 
 function startTimer(){
 
+  clearInterval(timerInterval);
+
   timerInterval=setInterval(()=>{
 
-    if(!gameRunning) return;
+    if(!gameRunning)return;
 
     timeLeft--;
 
-    let minutes=Math.floor(timeLeft/60);
+    const minutes=
+      Math.floor(timeLeft/60);
 
-    let seconds=timeLeft%60;
+    const seconds=
+      timeLeft%60;
 
     document.getElementById("top").innerText=
-      String(minutes).padStart(2,"0")+":"+
+      String(minutes).padStart(2,"0")+
+      ":"+
       String(seconds).padStart(2,"0");
 
 
@@ -514,98 +710,134 @@ function startTimer(){
 }
 
 
-/* =========================================================
-   HEDİYEYİ RASTGELE TAŞI
-   ========================================================= */
+/* =====================================================
+   KUTU KONUM SİSTEMİ
+   EKRANI 9 GÜVENLİ BÖLGEYE BÖLÜYOR
+===================================================== */
 
 function moveGift(){
 
-  const gift=document.getElementById("gift");
+  const gift=
+    document.getElementById("gift");
 
-  const marginX=100;
+  const width=
+    window.innerWidth;
 
-  const marginTop=130;
+  const height=
+    window.innerHeight;
 
-  const marginBottom=100;
 
-  const minX=marginX;
+  const zones=[
 
-  const maxX=window.innerWidth-marginX;
+    {x:.18,y:.27},
+    {x:.50,y:.27},
+    {x:.82,y:.27},
 
-  const minY=marginTop;
+    {x:.22,y:.53},
+    {x:.50,y:.53},
+    {x:.78,y:.53},
 
-  const maxY=window.innerHeight-marginBottom;
+    {x:.18,y:.78},
+    {x:.50,y:.78},
+    {x:.82,y:.78}
 
-  const x=
-    minX+
-    Math.random()*(maxX-minX);
+  ];
 
-  const y=
-    minY+
-    Math.random()*(maxY-minY);
+
+  let zone;
+
+  do{
+
+    zone=
+      Math.floor(
+        Math.random()*zones.length
+      );
+
+  }while(
+    zone===lastGiftZone &&
+    zones.length>1
+  );
+
+
+  lastGiftZone=zone;
+
+
+  const position=zones[zone];
+
+
+  const x=width*position.x;
+  const y=height*position.y;
+
 
   gift.style.left=x+"px";
-
   gift.style.top=y+"px";
+
+
+  gift.dataset.x=x;
+  gift.dataset.y=y;
 
 }
 
 
-/* =========================================================
-   HEDİYEYE TIKLAMA
-   ========================================================= */
+/* =====================================================
+   HEDİYE TIKLANDI
+===================================================== */
 
 function giftClick(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
-  if(bombActive) return;
+  if(bombActive)return;
 
   if(
-    document.getElementById("questionOverlay").style.display==="flex"
+    document.getElementById(
+      "questionOverlay"
+    ).style.display==="flex"
   ){
     return;
   }
 
 
-  const gift=document.getElementById("gift");
-
-  const currentScale=
-    parseFloat(
-      gift.style.transform.match(/scale\(([^)]+)\)/)?.[1] || "1"
-    );
-
-  const newScale=Math.max(
-    0.55,
-    currentScale-0.04
-  );
-
-  gift.style.transform=
-    "translate(-50%,-50%) scale("+newScale+")";
+  playSound("click");
 
 
-  /* HER TIKLAMADA KUTU YER DEĞİŞTİRİR */
+  const gift=
+    document.getElementById("gift");
 
-  moveGift();
+
+  gift.classList.remove("shake");
+
+  void gift.offsetWidth;
+
+  gift.classList.add("shake");
 
 
-  /* OLAYI SEÇ */
+  /* önce olay */
 
   randomEvent();
+
+
+  /* sonra kutu hareket eder */
+
+  setTimeout(()=>{
+
+    if(gameRunning && !bombActive){
+      moveGift();
+    }
+
+  },180);
 
 }
 
 
-/* =========================================================
+/* =====================================================
    RASTGELE OLAY
-   ========================================================= */
+===================================================== */
 
 function randomEvent(){
 
   const random=Math.random();
 
-
-  /* BOMBA */
 
   if(random < BOMBA_IHTIMALI){
 
@@ -616,9 +848,11 @@ function randomEvent(){
   }
 
 
-  /* SORU */
-
-  if(random < BOMBA_IHTIMALI + SORU_IHTIMALI){
+  if(
+    random <
+    BOMBA_IHTIMALI+
+    SORU_IHTIMALI
+  ){
 
     showQuestion();
 
@@ -629,90 +863,54 @@ function randomEvent(){
 }
 
 
-/* =========================================================
-   BOMBA GÖSTER
-   ========================================================= */
+/* =====================================================
+   BOMBA
+   SADECE KUTUNUN ÜSTÜNDE
+===================================================== */
 
 function showBomb(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
-  if(bombActive) return;
+  if(bombActive)return;
+
 
   bombActive=true;
 
+  playSound("bomb");
 
-  const bomb=document.getElementById("bomb");
-
-  const bombSize=90;
-
-  const safeTop=110;
-
-  const safeBottom=100;
-
-  const maxX=
-    Math.max(
-      20,
-      window.innerWidth-bombSize-20
-    );
-
-  const maxY=
-    Math.max(
-      safeTop,
-      window.innerHeight-safeBottom-bombSize
-    );
-
-
-  let x=
-    20+
-    Math.random()*
-    Math.max(20,maxX-20);
-
-  let y=
-    safeTop+
-    Math.random()*
-    Math.max(20,maxY-safeTop);
-
-
-  /* BOMBA KUTUYA ÇOK YAKINSA YENİ KONUM */
 
   const gift=
     document.getElementById("gift");
 
-  const giftRect=
-    gift.getBoundingClientRect();
+  const bomb=
+    document.getElementById("bomb");
 
 
-  const giftCenterX=
-    giftRect.left+
-    giftRect.width/2;
+  const giftX=
+    parseFloat(gift.dataset.x);
 
-  const giftCenterY=
-    giftRect.top+
-    giftRect.height/2;
-
-  const distance=
-    Math.sqrt(
-      Math.pow(x-giftCenterX,2)+
-      Math.pow(y-giftCenterY,2)
-    );
+  const giftY=
+    parseFloat(gift.dataset.y);
 
 
-  if(distance<180){
+  /*
+    Bomba tam olarak kutunun bulunduğu
+    noktaya yerleşiyor.
+  */
 
-    x=
-      x<window.innerWidth/2
-      ? Math.min(window.innerWidth-110,x+200)
-      : Math.max(20,x-200);
+  bomb.style.left=
+    giftX+"px";
 
-  }
+  bomb.style.top=
+    (giftY-5)+"px";
 
 
-  bomb.style.left=x+"px";
+  bomb.style.transform=
+    "translate(-50%,-50%)";
 
-  bomb.style.top=y+"px";
 
-  bomb.style.display="block";
+  bomb.style.display="flex";
 
 
   bombCountdown=5;
@@ -729,7 +927,6 @@ function showBomb(){
     if(!gameRunning){
 
       clearInterval(bombInterval);
-
       return;
 
     }
@@ -750,6 +947,16 @@ function showBomb(){
 
       bombActive=false;
 
+      playSound("click");
+
+
+      /*
+        Bomba gittikten sonra kutu
+        yeni yere hareket ediyor.
+      */
+
+      moveGift();
+
     }
 
   },1000);
@@ -757,50 +964,38 @@ function showBomb(){
 }
 
 
-/* =========================================================
+/* =====================================================
    BOMBA TIKLANDI
-   ========================================================= */
+===================================================== */
 
 function bombClicked(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
   gameRunning=false;
 
   bombActive=false;
 
   clearInterval(timerInterval);
-
   clearInterval(bombInterval);
 
   document.getElementById("bomb").style.display="none";
+
+  playSound("lose");
 
   document.getElementById("lose").style.display="flex";
 
 }
 
 
-/* =========================================================
-   SORU GÖSTER
-   ========================================================= */
+/* =====================================================
+   SORU
+===================================================== */
 
 function showQuestion(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
-
-  /* TÜM SORULAR BİTTİYSE BİR DAHA SORMA */
-
-  if(questionCount>=questions.length){
-
-    finishGame();
-
-    return;
-
-  }
-
-
-  /* SADECE KULLANILMAMIŞ SORULAR */
 
   const available=
     questions.filter(
@@ -816,8 +1011,6 @@ function showQuestion(){
 
   }
 
-
-  /* RASTGELE KULLANILMAMIŞ SORU */
 
   const question=
     available[
@@ -844,10 +1037,6 @@ function showQuestion(){
     "flex";
 
 
-  /* =====================================================
-     RENK
-     ===================================================== */
-
   if(question.type==="text"){
 
     content.innerHTML=`
@@ -867,10 +1056,6 @@ function showQuestion(){
   }
 
 
-  /* =====================================================
-     KARAKTER
-     ===================================================== */
-
   if(question.type==="textarea"){
 
     content.innerHTML=`
@@ -888,10 +1073,6 @@ function showQuestion(){
 
   }
 
-
-  /* =====================================================
-     PRENS
-     ===================================================== */
 
   if(question.type==="prince"){
 
@@ -917,10 +1098,6 @@ function showQuestion(){
   }
 
 
-  /* =====================================================
-     SAYI
-     ===================================================== */
-
   if(question.type==="number"){
 
     content.innerHTML=`
@@ -944,13 +1121,13 @@ function showQuestion(){
 }
 
 
-/* =========================================================
-   METİN CEVABI
-   ========================================================= */
+/* =====================================================
+   METİN
+===================================================== */
 
 function saveTextAnswer(id){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
 
   const input=
@@ -976,13 +1153,13 @@ function saveTextAnswer(id){
 }
 
 
-/* =========================================================
-   PRENS CEVABI
-   ========================================================= */
+/* =====================================================
+   PRENS
+===================================================== */
 
 function savePrinceAnswer(answer){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
   answersData.littlePrince=answer;
 
@@ -991,13 +1168,13 @@ function savePrinceAnswer(answer){
 }
 
 
-/* =========================================================
-   SAYI CEVABI
-   ========================================================= */
+/* =====================================================
+   SAYI
+===================================================== */
 
 function saveNumberAnswer(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
 
 
   const input=
@@ -1027,18 +1204,20 @@ function saveNumberAnswer(){
 }
 
 
-/* =========================================================
-   SORU CEVAPLANDI
-   ========================================================= */
+/* =====================================================
+   SORU TAMAMLANDI
+===================================================== */
 
 function questionAnswered(){
 
   questionCount++;
 
-  closeQuestion();
+  playSound("success");
 
 
-  /* 4 SORUNUN TAMAMI CEVAPLANDI */
+  document.getElementById("questionOverlay").style.display=
+    "none";
+
 
   if(questionCount>=questions.length){
 
@@ -1049,48 +1228,36 @@ function questionAnswered(){
   }
 
 
-  /* CEVAPTAN SONRA KUTUYU BAŞKA YERE TAŞI */
-
   moveGift();
 
 }
 
 
-/* =========================================================
-   SORUYU KAPAT
-   ========================================================= */
-
-function closeQuestion(){
-
-  document.getElementById("questionOverlay").style.display=
-    "none";
-
-}
-
-
-/* =========================================================
+/* =====================================================
    OYUNU BİTİR
-   ========================================================= */
+===================================================== */
 
 async function finishGame(){
 
-  if(!gameRunning) return;
+  if(!gameRunning)return;
+
 
   gameRunning=false;
 
   clearInterval(timerInterval);
-
   clearInterval(bombInterval);
 
   bombActive=false;
 
 
   document.getElementById("gift").style.display="none";
-
   document.getElementById("bomb").style.display="none";
 
   document.getElementById("questionOverlay").style.display=
     "none";
+
+
+  playSound("success");
 
 
   console.log(
@@ -1099,17 +1266,12 @@ async function finishGame(){
   );
 
 
-  /* =====================================================
-     GOOGLE SHEETS'E GÖNDER
-     ===================================================== */
-
   try{
 
     await fetch(
       APPS_SCRIPT_URL,
       {
         method:"POST",
-
         mode:"no-cors",
 
         headers:{
@@ -1120,10 +1282,6 @@ async function finishGame(){
         body:
           JSON.stringify(answersData)
       }
-    );
-
-    console.log(
-      "Cevap gönderme isteği yapıldı."
     );
 
   }catch(error){
