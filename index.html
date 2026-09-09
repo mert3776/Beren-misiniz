@@ -95,29 +95,31 @@ button:hover{
 #gift{
   position:absolute;
   left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  font-size:100px;
+  top:55%;
+  transform:translate(-50%,-50%) scale(1);
+  font-size:90px;
   cursor:pointer;
   user-select:none;
-  transition:.25s;
+  transition:left .25s ease, top .25s ease, transform .25s ease;
+  z-index:3;
 }
 
 #bomb{
   position:absolute;
   display:none;
-  font-size:75px;
+  font-size:70px;
   cursor:pointer;
   user-select:none;
   z-index:5;
+  text-align:center;
 }
 
 #bombTimer{
   position:absolute;
-  top:-35px;
+  top:-32px;
   left:50%;
   transform:translateX(-50%);
-  font-size:22px;
+  font-size:20px;
   color:#ff4444;
   font-weight:bold;
 }
@@ -197,43 +199,61 @@ textarea{
 
 <!-- BAŞLANGIÇ -->
 <div id="start" class="screen">
+
   <div class="card">
+
     <h1>Küçük Bir Oyun</h1>
 
     <p>Hediye kutusuna tıklaman gerekiyor.</p>
+
     <p>Bombaya tıklama. Gitmesini bekle.</p>
+
     <p>Sorular çıktığında cevapla.</p>
+
     <p>Ve dikkat et...</p>
+
     <p>Ne kadar süreceğini sen de bilmiyorsun.</p>
 
     <p class="small">
       Oyunda verdiğin cevaplar, oyunun sonunda bu sürprizin sahibi tarafından görülebilir.
     </p>
 
-    <button class="start-btn" onclick="startGame()">Başla</button>
+    <button class="start-btn" onclick="startGame()">
+      Başla
+    </button>
+
   </div>
+
 </div>
 
 
 <!-- OYUN -->
 <div id="game">
+
   <div id="top">02:00</div>
 
   <div id="gameArea">
 
-    <div id="gift" onclick="giftClick()">🎁</div>
+    <div id="gift" onclick="giftClick()">
+      🎁
+    </div>
 
     <div id="bomb" onclick="bombClicked()">
+
       <div id="bombTimer">5</div>
+
       💣
+
     </div>
 
   </div>
+
 </div>
 
 
 <!-- SORU -->
 <div id="questionOverlay" class="overlay">
+
   <div class="questionBox">
 
     <h2 id="questionText"></h2>
@@ -241,25 +261,31 @@ textarea{
     <div id="questionContent"></div>
 
   </div>
+
 </div>
 
 
 <!-- KAYBETTİN -->
 <div id="lose" class="overlay">
+
   <div class="card">
 
     <h1>Oyun Bitti</h1>
 
     <p>Bombaya tıkladın.</p>
 
-    <button onclick="restartGame()">Tekrar Dene</button>
+    <button onclick="restartGame()">
+      Tekrar Dene
+    </button>
 
   </div>
+
 </div>
 
 
 <!-- FINAL -->
 <div id="final" class="overlay">
+
   <div class="card">
 
     <h1>İYİ Kİ DOĞDUN</h1>
@@ -270,16 +296,20 @@ textarea{
 
     <p>Haftasonu görüşürüz (umarım)</p>
 
-    <p class="small">BİZİM SİNİSİLİK KURNAZLIK</p>
+    <p class="small">
+      BİZİM SİNİSİLİK KURNAZLIK
+    </p>
 
   </div>
+
 </div>
 
 
 <script>
 
+
 /* =========================================================
-   GOOGLE APPS SCRIPT ADRESİNİ BURAYA KOY
+   GOOGLE APPS SCRIPT
    ========================================================= */
 
 const APPS_SCRIPT_URL =
@@ -292,9 +322,9 @@ const APPS_SCRIPT_URL =
 
 const OYUN_SURESI = 120;
 
-const BOMBA_IHTIMALI = 0.14;
+const BOMBA_IHTIMALI = 0.16;
 
-const SORU_IHTIMALI = 0.10;
+const SORU_IHTIMALI = 0.18;
 
 
 /* =========================================================
@@ -309,13 +339,61 @@ let bombInterval = null;
 
 let bombCountdown = 5;
 
-let boxLevel = 1;
-
 let gameRunning = false;
 
 let answersData = {};
 
 let usedQuestions = [];
+
+let questionCount = 0;
+
+let bombActive = false;
+
+
+/* =========================================================
+   SORULAR
+   ========================================================= */
+
+const questions = [
+
+  {
+    id:"colors",
+
+    text:"En sevdiğin 3 rengi 1’den 3’e sırala.",
+
+    type:"text",
+
+    placeholder:"Örnek: 1. Bordo  2. Siyah  3. Mor"
+  },
+
+  {
+    id:"characters",
+
+    text:"Animasyon, film, dizi, oyun, kitap… fark etmez. En sevdiğin 5 kurgusal karakteri 1’den 5’e sırala.",
+
+    type:"textarea",
+
+    placeholder:
+      "1. karakter:\n2. karakter:\n3. karakter:\n4. karakter:\n5. karakter:"
+  },
+
+  {
+    id:"littlePrince",
+
+    text:"Sence aşağıdaki çizim neyi gösteriyor?",
+
+    type:"prince"
+  },
+
+  {
+    id:"number",
+
+    text:"1 ile 10 arasında aklından bir sayı tut.",
+
+    type:"number"
+  }
+
+];
 
 
 /* =========================================================
@@ -334,6 +412,8 @@ function startGame(){
 
   startTimer();
 
+  moveGift();
+
 }
 
 
@@ -349,13 +429,17 @@ function resetGame(){
 
   timeLeft=OYUN_SURESI;
 
-  boxLevel=1;
-
   bombCountdown=5;
 
   answersData={};
 
   usedQuestions=[];
+
+  questionCount=0;
+
+  bombActive=false;
+
+  gameRunning=false;
 
   document.getElementById("top").innerText="02:00";
 
@@ -391,6 +475,8 @@ function restartGame(){
 
   startTimer();
 
+  moveGift();
+
 }
 
 
@@ -414,6 +500,7 @@ function startTimer(){
       String(minutes).padStart(2,"0")+":"+
       String(seconds).padStart(2,"0");
 
+
     if(timeLeft<=0){
 
       clearInterval(timerInterval);
@@ -428,6 +515,43 @@ function startTimer(){
 
 
 /* =========================================================
+   HEDİYEYİ RASTGELE TAŞI
+   ========================================================= */
+
+function moveGift(){
+
+  const gift=document.getElementById("gift");
+
+  const marginX=100;
+
+  const marginTop=130;
+
+  const marginBottom=100;
+
+  const minX=marginX;
+
+  const maxX=window.innerWidth-marginX;
+
+  const minY=marginTop;
+
+  const maxY=window.innerHeight-marginBottom;
+
+  const x=
+    minX+
+    Math.random()*(maxX-minX);
+
+  const y=
+    minY+
+    Math.random()*(maxY-minY);
+
+  gift.style.left=x+"px";
+
+  gift.style.top=y+"px";
+
+}
+
+
+/* =========================================================
    HEDİYEYE TIKLAMA
    ========================================================= */
 
@@ -435,14 +559,37 @@ function giftClick(){
 
   if(!gameRunning) return;
 
-  boxLevel++;
+  if(bombActive) return;
+
+  if(
+    document.getElementById("questionOverlay").style.display==="flex"
+  ){
+    return;
+  }
+
 
   const gift=document.getElementById("gift");
 
-  const scale=Math.max(0.45,1-(boxLevel*0.07));
+  const currentScale=
+    parseFloat(
+      gift.style.transform.match(/scale\(([^)]+)\)/)?.[1] || "1"
+    );
+
+  const newScale=Math.max(
+    0.55,
+    currentScale-0.04
+  );
 
   gift.style.transform=
-    "translate(-50%,-50%) scale("+scale+")";
+    "translate(-50%,-50%) scale("+newScale+")";
+
+
+  /* HER TIKLAMADA KUTU YER DEĞİŞTİRİR */
+
+  moveGift();
+
+
+  /* OLAYI SEÇ */
 
   randomEvent();
 
@@ -457,6 +604,9 @@ function randomEvent(){
 
   const random=Math.random();
 
+
+  /* BOMBA */
+
   if(random < BOMBA_IHTIMALI){
 
     showBomb();
@@ -464,6 +614,9 @@ function randomEvent(){
     return;
 
   }
+
+
+  /* SORU */
 
   if(random < BOMBA_IHTIMALI + SORU_IHTIMALI){
 
@@ -477,22 +630,83 @@ function randomEvent(){
 
 
 /* =========================================================
-   BOMBA
+   BOMBA GÖSTER
    ========================================================= */
 
 function showBomb(){
 
   if(!gameRunning) return;
 
+  if(bombActive) return;
+
+  bombActive=true;
+
+
   const bomb=document.getElementById("bomb");
 
-  const maxX=window.innerWidth-100;
+  const bombSize=90;
 
-  const maxY=window.innerHeight-160;
+  const safeTop=110;
 
-  const x=Math.random()*maxX+40;
+  const safeBottom=100;
 
-  const y=Math.random()*maxY+80;
+  const maxX=
+    Math.max(
+      20,
+      window.innerWidth-bombSize-20
+    );
+
+  const maxY=
+    Math.max(
+      safeTop,
+      window.innerHeight-safeBottom-bombSize
+    );
+
+
+  let x=
+    20+
+    Math.random()*
+    Math.max(20,maxX-20);
+
+  let y=
+    safeTop+
+    Math.random()*
+    Math.max(20,maxY-safeTop);
+
+
+  /* BOMBA KUTUYA ÇOK YAKINSA YENİ KONUM */
+
+  const gift=
+    document.getElementById("gift");
+
+  const giftRect=
+    gift.getBoundingClientRect();
+
+
+  const giftCenterX=
+    giftRect.left+
+    giftRect.width/2;
+
+  const giftCenterY=
+    giftRect.top+
+    giftRect.height/2;
+
+  const distance=
+    Math.sqrt(
+      Math.pow(x-giftCenterX,2)+
+      Math.pow(y-giftCenterY,2)
+    );
+
+
+  if(distance<180){
+
+    x=
+      x<window.innerWidth/2
+      ? Math.min(window.innerWidth-110,x+200)
+      : Math.max(20,x-200);
+
+  }
+
 
   bomb.style.left=x+"px";
 
@@ -500,23 +714,41 @@ function showBomb(){
 
   bomb.style.display="block";
 
+
   bombCountdown=5;
 
-  document.getElementById("bombTimer").innerText=bombCountdown;
+  document.getElementById("bombTimer").innerText=
+    bombCountdown;
+
 
   clearInterval(bombInterval);
 
+
   bombInterval=setInterval(()=>{
+
+    if(!gameRunning){
+
+      clearInterval(bombInterval);
+
+      return;
+
+    }
+
 
     bombCountdown--;
 
-    document.getElementById("bombTimer").innerText=bombCountdown;
+
+    document.getElementById("bombTimer").innerText=
+      bombCountdown;
+
 
     if(bombCountdown<=0){
 
       clearInterval(bombInterval);
 
       bomb.style.display="none";
+
+      bombActive=false;
 
     }
 
@@ -535,6 +767,8 @@ function bombClicked(){
 
   gameRunning=false;
 
+  bombActive=false;
+
   clearInterval(timerInterval);
 
   clearInterval(bombInterval);
@@ -547,56 +781,6 @@ function bombClicked(){
 
 
 /* =========================================================
-   SORULAR
-   ========================================================= */
-
-const questions=[
-
-  {
-    id:"colors",
-
-    text:"En sevdiğin 3 rengi 1’den 3’e sırala.",
-
-    type:"text",
-
-    placeholder:"Örnek: 1. Bordo  2. Siyah  3. Mor"
-
-  },
-
-  {
-    id:"characters",
-
-    text:"Animasyon, film, dizi, oyun, kitap… fark etmez. En sevdiğin 5 kurgusal karakteri 1’den 5’e sırala.",
-
-    type:"textarea",
-
-    placeholder:
-      "1. karakter:\n2. karakter:\n3. karakter:\n4. karakter:\n5. karakter:"
-
-  },
-
-  {
-    id:"littlePrince",
-
-    text:"Sence aşağıdaki çizim neyi gösteriyor?",
-
-    type:"prince"
-
-  },
-
-  {
-    id:"number",
-
-    text:"1 ile 10 arasında aklından bir sayı tut.",
-
-    type:"number"
-
-  }
-
-];
-
-
-/* =========================================================
    SORU GÖSTER
    ========================================================= */
 
@@ -604,35 +788,66 @@ function showQuestion(){
 
   if(!gameRunning) return;
 
-  let available=questions.filter(
-    q=>!usedQuestions.includes(q.id)
-  );
 
-  if(available.length===0){
+  /* TÜM SORULAR BİTTİYSE BİR DAHA SORMA */
 
-    usedQuestions=[];
+  if(questionCount>=questions.length){
 
-    available=questions;
+    finishGame();
+
+    return;
 
   }
 
+
+  /* SADECE KULLANILMAMIŞ SORULAR */
+
+  const available=
+    questions.filter(
+      q=>!usedQuestions.includes(q.id)
+    );
+
+
+  if(available.length===0){
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  /* RASTGELE KULLANILMAMIŞ SORU */
+
   const question=
-    available[Math.floor(Math.random()*available.length)];
+    available[
+      Math.floor(
+        Math.random()*available.length
+      )
+    ];
+
 
   usedQuestions.push(question.id);
 
+
   document.getElementById("questionText").innerText=
     question.text;
+
 
   const content=
     document.getElementById("questionContent");
 
   content.innerHTML="";
 
-  document.getElementById("questionOverlay").style.display="flex";
+
+  document.getElementById("questionOverlay").style.display=
+    "flex";
 
 
-  /* RENK */
+  /* =====================================================
+     RENK
+     ===================================================== */
+
   if(question.type==="text"){
 
     content.innerHTML=`
@@ -652,7 +867,10 @@ function showQuestion(){
   }
 
 
-  /* KARAKTER */
+  /* =====================================================
+     KARAKTER
+     ===================================================== */
+
   if(question.type==="textarea"){
 
     content.innerHTML=`
@@ -671,7 +889,10 @@ function showQuestion(){
   }
 
 
-  /* PRENS */
+  /* =====================================================
+     PRENS
+     ===================================================== */
+
   if(question.type==="prince"){
 
     content.innerHTML=`
@@ -696,7 +917,10 @@ function showQuestion(){
   }
 
 
-  /* SAYI */
+  /* =====================================================
+     SAYI
+     ===================================================== */
+
   if(question.type==="number"){
 
     content.innerHTML=`
@@ -726,9 +950,15 @@ function showQuestion(){
 
 function saveTextAnswer(id){
 
-  const input=document.getElementById("answerInput");
+  if(!gameRunning) return;
 
-  const value=input.value.trim();
+
+  const input=
+    document.getElementById("answerInput");
+
+  const value=
+    input.value.trim();
+
 
   if(value===""){
 
@@ -738,9 +968,10 @@ function saveTextAnswer(id){
 
   }
 
+
   answersData[id]=value;
 
-  closeQuestion();
+  questionAnswered();
 
 }
 
@@ -751,9 +982,11 @@ function saveTextAnswer(id){
 
 function savePrinceAnswer(answer){
 
+  if(!gameRunning) return;
+
   answersData.littlePrince=answer;
 
-  closeQuestion();
+  questionAnswered();
 
 }
 
@@ -764,11 +997,21 @@ function savePrinceAnswer(answer){
 
 function saveNumberAnswer(){
 
-  const input=document.getElementById("numberInput");
+  if(!gameRunning) return;
 
-  const value=input.value.trim();
 
-  if(value==="" || value<1 || value>10){
+  const input=
+    document.getElementById("numberInput");
+
+  const value=
+    input.value.trim();
+
+
+  if(
+    value==="" ||
+    Number(value)<1 ||
+    Number(value)>10
+  ){
 
     alert("1 ile 10 arasında bir sayı gir.");
 
@@ -776,9 +1019,39 @@ function saveNumberAnswer(){
 
   }
 
+
   answersData.number=value;
 
+  questionAnswered();
+
+}
+
+
+/* =========================================================
+   SORU CEVAPLANDI
+   ========================================================= */
+
+function questionAnswered(){
+
+  questionCount++;
+
   closeQuestion();
+
+
+  /* 4 SORUNUN TAMAMI CEVAPLANDI */
+
+  if(questionCount>=questions.length){
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  /* CEVAPTAN SONRA KUTUYU BAŞKA YERE TAŞI */
+
+  moveGift();
 
 }
 
@@ -789,13 +1062,14 @@ function saveNumberAnswer(){
 
 function closeQuestion(){
 
-  document.getElementById("questionOverlay").style.display="none";
+  document.getElementById("questionOverlay").style.display=
+    "none";
 
 }
 
 
 /* =========================================================
-   OYUN BİTİR
+   OYUNU BİTİR
    ========================================================= */
 
 async function finishGame(){
@@ -808,41 +1082,62 @@ async function finishGame(){
 
   clearInterval(bombInterval);
 
+  bombActive=false;
+
+
   document.getElementById("gift").style.display="none";
 
-  console.log("BEREN'İN CEVAPLARI:",answersData);
+  document.getElementById("bomb").style.display="none";
+
+  document.getElementById("questionOverlay").style.display=
+    "none";
 
 
-  /*
-    CEVAPLARI GOOGLE SHEETS'E GÖNDER
-  */
+  console.log(
+    "BEREN'İN CEVAPLARI:",
+    answersData
+  );
+
+
+  /* =====================================================
+     GOOGLE SHEETS'E GÖNDER
+     ===================================================== */
 
   try{
 
-    await fetch(APPS_SCRIPT_URL,{
+    await fetch(
+      APPS_SCRIPT_URL,
+      {
+        method:"POST",
 
-      method:"POST",
+        mode:"no-cors",
 
-      mode:"no-cors",
+        headers:{
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
 
-      headers:{
-        "Content-Type":"text/plain;charset=utf-8"
-      },
+        body:
+          JSON.stringify(answersData)
+      }
+    );
 
-      body:JSON.stringify(answersData)
-
-    });
-
-    console.log("Cevap gönderme isteği yapıldı.");
+    console.log(
+      "Cevap gönderme isteği yapıldı."
+    );
 
   }catch(error){
 
-    console.log("Gönderme hatası:",error);
+    console.log(
+      "Gönderme hatası:",
+      error
+    );
 
   }
 
 
-  document.getElementById("final").style.display="flex";
+  document.getElementById("final").style.display=
+    "flex";
 
 }
 
