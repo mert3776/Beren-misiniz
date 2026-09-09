@@ -42,18 +42,13 @@ body::before{
 }
 
 @keyframes stars{
-  from{
-    transform:translateY(0);
-  }
-
-  to{
-    transform:translateY(-45px);
-  }
+  from{transform:translateY(0)}
+  to{transform:translateY(-45px)}
 }
 
 
 /* =========================
-   GENEL EKRAN
+   GENEL
 ========================= */
 
 .screen{
@@ -80,8 +75,7 @@ body::before{
 
   border-radius:24px;
 
-  box-shadow:
-    0 20px 70px rgba(0,0,0,.55);
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
 
   backdrop-filter:blur(12px);
 }
@@ -166,7 +160,6 @@ button:hover{
 ========================= */
 
 #gift{
-
   position:absolute;
 
   width:100px;
@@ -191,21 +184,19 @@ button:hover{
     top .35s cubic-bezier(.2,.8,.2,1),
     transform .2s ease;
 
-  filter:
-    drop-shadow(0 8px 15px rgba(0,0,0,.45));
+  filter:drop-shadow(
+    0 8px 15px rgba(0,0,0,.45)
+  );
 }
 
 #gift:hover{
-
   transform:
     translate(-50%,-50%)
     scale(1.08);
 }
 
 #gift.shake{
-
-  animation:
-    giftShake .25s ease;
+  animation:giftShake .25s ease;
 }
 
 @keyframes giftShake{
@@ -243,7 +234,6 @@ button:hover{
 ========================= */
 
 #bomb{
-
   position:absolute;
 
   display:none;
@@ -265,14 +255,15 @@ button:hover{
     translate(-50%,-50%);
 
   filter:
-    drop-shadow(0 0 18px rgba(255,50,50,.65));
+    drop-shadow(
+      0 0 18px
+      rgba(255,50,50,.65)
+    );
 
-  animation:
-    bombPulse 1s infinite;
+  animation:bombPulse 1s infinite;
 }
 
 #bombTimer{
-
   position:absolute;
 
   top:-8px;
@@ -286,8 +277,7 @@ button:hover{
 
   font-weight:bold;
 
-  text-shadow:
-    0 0 10px red;
+  text-shadow:0 0 10px red;
 }
 
 @keyframes bombPulse{
@@ -311,11 +301,10 @@ button:hover{
 
 
 /* =========================
-   SORU
+   SORULAR
 ========================= */
 
 .overlay{
-
   position:fixed;
 
   inset:0;
@@ -336,7 +325,6 @@ button:hover{
 }
 
 .questionBox{
-
   width:min(600px,100%);
 
   max-height:90vh;
@@ -361,18 +349,13 @@ button:hover{
 }
 
 .questionBox h2{
-
   margin-bottom:20px;
-
   line-height:1.4;
 }
 
 .option{
-
   display:block;
-
   width:100%;
-
   margin:10px 0;
 }
 
@@ -399,30 +382,51 @@ textarea{
 }
 
 textarea{
-
   min-height:130px;
-
   resize:vertical;
 }
 
 .small{
-
   color:#999;
-
   font-size:13px;
-
   margin-top:15px;
 }
 
-#final h1{
 
+/* =========================
+   KÜÇÜK PRENS ÇİZİMİ
+========================= */
+
+.princeDrawing{
+  width:100%;
+  max-width:330px;
+
+  margin:0 auto 20px;
+
+  padding:15px;
+
+  border-radius:16px;
+
+  background:#f4e8c1;
+}
+
+.princeDrawing svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+
+/* =========================
+   FİNAL
+========================= */
+
+#final h1{
   font-size:38px;
 }
 
 #final h2{
-
   margin:15px 0;
-
   font-size:22px;
 }
 
@@ -477,7 +481,6 @@ textarea{
   <div id="top">
     02:00
   </div>
-
 
   <div id="gameArea">
 
@@ -661,13 +664,11 @@ function playSound(type){
 
     initAudio();
 
-
     const osc =
       audioCtx.createOscillator();
 
     const gain =
       audioCtx.createGain();
-
 
     osc.connect(gain);
 
@@ -935,6 +936,7 @@ function resetGame(){
   const gift =
     document.getElementById("gift");
 
+
   const bomb =
     document.getElementById("bomb");
 
@@ -969,21 +971,13 @@ function resetGame(){
 
 function restartGame(){
 
-  document.getElementById(
-    "lose"
-  ).style.display="none";
-
-
   resetGame();
-
 
   document.getElementById(
     "game"
   ).style.display="block";
 
-
   gameRunning=true;
-
 
   startTimer();
 
@@ -1000,11 +994,9 @@ function startTimer(){
 
   clearInterval(timerInterval);
 
-
   timerInterval=setInterval(()=>{
 
     if(!gameRunning)return;
-
 
     timeLeft--;
 
@@ -1074,20 +1066,16 @@ function moveGift(){
     gift.offsetHeight;
 
 
-  /*
-    Güvenli alan.
-    Üstte zamanlayıcıdan uzak.
-  */
+  const marginX=70;
 
-  const marginX = 70;
+  const marginTop=100;
 
-  const marginTop = 100;
-
-  const marginBottom = 70;
+  const marginBottom=70;
 
 
   const minX =
-    marginX + giftWidth/2;
+    marginX +
+    giftWidth/2;
 
 
   const maxX =
@@ -1107,16 +1095,6 @@ function moveGift(){
     giftHeight/2;
 
 
-  let x;
-
-  let y;
-
-
-  /*
-    Önceki konumdan
-    çok uzak bir nokta seç.
-  */
-
   const oldX =
     parseFloat(
       gift.dataset.x || "-9999"
@@ -1128,6 +1106,10 @@ function moveGift(){
       gift.dataset.y || "-9999"
     );
 
+
+  let x;
+
+  let y;
 
   let attempts=0;
 
@@ -1195,7 +1177,6 @@ function giftClick(){
 
   if(!gameRunning)return;
 
-
   if(bombActive)return;
 
 
@@ -1234,17 +1215,8 @@ function giftClick(){
   );
 
 
-  /*
-    Önce olay belirlenir.
-  */
-
   randomEvent();
 
-
-  /*
-    Eğer soru veya bomba çıkmadıysa
-    kutu yeni yere gider.
-  */
 
   setTimeout(()=>{
 
@@ -1283,10 +1255,6 @@ function randomEvent(){
     Math.random();
 
 
-  /*
-    BOMBA
-  */
-
   if(
     random < BOMBA_IHTIMALI
   ){
@@ -1297,10 +1265,6 @@ function randomEvent(){
 
   }
 
-
-  /*
-    SORU
-  */
 
   if(
     random <
@@ -1319,7 +1283,6 @@ function randomEvent(){
 
 /* =====================================================
    BOMBA
-   SADECE KUTUNUN YERİNDE
 ===================================================== */
 
 function showBomb(){
@@ -1331,7 +1294,6 @@ function showBomb(){
 
   bombActive=true;
 
-
   playSound("bomb");
 
 
@@ -1342,11 +1304,6 @@ function showBomb(){
   const bomb =
     document.getElementById("bomb");
 
-
-  /*
-    Kutunun gerçek ekrandaki
-    konumunu alıyoruz.
-  */
 
   const x =
     parseFloat(
@@ -1360,18 +1317,9 @@ function showBomb(){
     );
 
 
-  /*
-    Kutu tamamen gizleniyor.
-  */
-
   gift.style.visibility =
     "hidden";
 
-
-  /*
-    Bomba TAM OLARAK
-    kutunun yerine geliyor.
-  */
 
   bomb.style.left =
     x+"px";
@@ -1445,11 +1393,6 @@ function showBomb(){
         playSound("click");
 
 
-        /*
-          Bomba gittikten sonra
-          kutu başka yere gider.
-        */
-
         moveGift();
 
       }
@@ -1473,13 +1416,9 @@ function bombClicked(){
   bombActive=false;
 
 
-  clearInterval(
-    timerInterval
-  );
+  clearInterval(timerInterval);
 
-  clearInterval(
-    bombInterval
-  );
+  clearInterval(bombInterval);
 
 
   document.getElementById(
@@ -1511,10 +1450,6 @@ function showQuestion(){
   if(!gameRunning)return;
 
 
-  /*
-    Daha önce sorulmamış soruları bul.
-  */
-
   const available =
     questions.filter(
       q =>
@@ -1523,11 +1458,6 @@ function showQuestion(){
         )
     );
 
-
-  /*
-    Tüm sorular kullanıldıysa
-    oyun biter.
-  */
 
   if(
     available.length===0
@@ -1540,10 +1470,6 @@ function showQuestion(){
   }
 
 
-  /*
-    Rastgele bir soru seç.
-  */
-
   const question =
     available[
       Math.floor(
@@ -1552,10 +1478,6 @@ function showQuestion(){
       )
     ];
 
-
-  /*
-    Bu soruyu kullanıldı olarak işaretle.
-  */
 
   usedQuestions.push(
     question.id
@@ -1582,9 +1504,9 @@ function showQuestion(){
   ).style.display="flex";
 
 
-  /* =====================
-     METİN
-  ===================== */
+  /* =========================
+     RENKLER
+  ========================= */
 
   if(
     question.type==="text"
@@ -1610,9 +1532,9 @@ function showQuestion(){
   }
 
 
-  /* =====================
-     UZUN METİN
-  ===================== */
+  /* =========================
+     KARAKTERLER
+  ========================= */
 
   if(
     question.type==="textarea"
@@ -1637,15 +1559,121 @@ function showQuestion(){
   }
 
 
-  /* =====================
-     PRENS
-  ===================== */
+  /* =========================
+     KÜÇÜK PRENS
+  ========================= */
 
   if(
     question.type==="prince"
   ){
 
     content.innerHTML=`
+
+      <div class="princeDrawing">
+
+        <svg
+          viewBox="0 0 320 210"
+          xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Arka plan -->
+
+          <rect
+            x="0"
+            y="0"
+            width="320"
+            height="210"
+            rx="12"
+            fill="#f4e8c1"/>
+
+
+          <!-- Boa yılanının dış şekli -->
+
+          <path
+            d="
+              M55 145
+              C45 105,70 65,115 58
+              C165 50,218 65,254 88
+              C285 108,283 145,253 160
+              C215 180,155 174,112 162
+              C84 154,65 151,55 145
+              Z
+            "
+            fill="#7c6b42"
+            stroke="#443a28"
+            stroke-width="5"/>
+
+
+          <!-- İçindeki fil -->
+
+          <path
+            d="
+              M105 108
+              C110 83,139 72,169 80
+              C190 86,199 105,192 123
+              C187 139,167 146,144 141
+              C124 137,103 126,105 108
+              Z
+            "
+            fill="#b8aaa0"
+            stroke="#6d625c"
+            stroke-width="4"/>
+
+
+          <!-- Fil kulağı -->
+
+          <path
+            d="
+              M125 102
+              C112 94,108 111,116 122
+              C123 131,134 126,137 114
+            "
+            fill="#a69a91"
+            stroke="#6d625c"
+            stroke-width="3"/>
+
+
+          <!-- Fil hortumu -->
+
+          <path
+            d="
+              M166 118
+              C177 126,176 139,164 144
+              C155 148,151 139,158 135
+              C166 131,168 127,163 123
+            "
+            fill="none"
+            stroke="#6d625c"
+            stroke-width="6"
+            stroke-linecap="round"/>
+
+
+          <!-- Göz -->
+
+          <circle
+            cx="153"
+            cy="101"
+            r="3"
+            fill="#222"/>
+
+
+          <!-- Küçük çizgi detayları -->
+
+          <path
+            d="M74 116 Q90 105 101 112"
+            fill="none"
+            stroke="#443a28"
+            stroke-width="3"/>
+
+          <path
+            d="M218 107 Q237 101 250 112"
+            fill="none"
+            stroke="#443a28"
+            stroke-width="3"/>
+
+        </svg>
+
+      </div>
+
 
       <button
         class="option"
@@ -1678,9 +1706,9 @@ function showQuestion(){
   }
 
 
-  /* =====================
+  /* =========================
      SAYI
-  ===================== */
+  ========================= */
 
   if(
     question.type==="number"
@@ -1697,9 +1725,9 @@ function showQuestion(){
       >
 
       <button
-        onclick="saveNumberAnswer()">
+        onclick="submitNumber()">
 
-        Sayımı Tahmin Et
+        Devam Et
 
       </button>
 
@@ -1767,10 +1795,10 @@ function savePrinceAnswer(answer){
 
 
 /* =====================================================
-   SAYI CEVABI
+   SAYIYI GİR
 ===================================================== */
 
-function saveNumberAnswer(){
+function submitNumber(){
 
   if(!gameRunning)return;
 
@@ -1808,8 +1836,69 @@ function saveNumberAnswer(){
   }
 
 
-  answersData.number =
-    value;
+  /*
+    Sayıyı geçici olarak saklıyoruz.
+    Sonra Evet / Hayır menüsü açılıyor.
+  */
+
+  answersData.number=value;
+
+
+  const content =
+    document.getElementById(
+      "questionContent"
+    );
+
+
+  document.getElementById(
+    "questionText"
+  ).innerText =
+    "Doğru bildim mi?";
+
+
+  content.innerHTML=`
+
+    <p style="
+      margin-bottom:18px;
+      color:#ccc;
+    ">
+      Tuttuğun sayı: <strong>${value}</strong>
+    </p>
+
+
+    <button
+      class="option"
+      onclick="saveNumberResult('Evet')">
+
+      Evet
+
+    </button>
+
+
+    <button
+      class="option"
+      onclick="saveNumberResult('Hayır')">
+
+      Hayır
+
+    </button>
+
+  `;
+
+}
+
+
+/* =====================================================
+   SAYI SONUCU
+===================================================== */
+
+function saveNumberResult(result){
+
+  if(!gameRunning)return;
+
+
+  answersData.numberResult =
+    result;
 
 
   questionAnswered();
@@ -1834,11 +1923,6 @@ function questionAnswered(){
   ).style.display="none";
 
 
-  /*
-    4 sorunun tamamı cevaplandıysa
-    oyun tamamlanır.
-  */
-
   if(
     questionCount>=questions.length
   ){
@@ -1849,10 +1933,6 @@ function questionAnswered(){
 
   }
 
-
-  /*
-    Yeni kutu konumu.
-  */
 
   moveGift();
 
@@ -1907,10 +1987,6 @@ async function finishGame(){
   );
 
 
-  /*
-    Google Sheets'e gönder.
-  */
-
   try{
 
     await fetch(
@@ -1958,3 +2034,4 @@ async function finishGame(){
 </body>
 </html>
 ```
+
