@@ -1,1 +1,1591 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>İyi Ki Doğdun</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at center,#fff7ed 0%,#f4dfc6 45%,#d1ad88 100%);
+    color:#29201c;
+}
+
+button{
+    font-family:inherit;
+}
+
+.screen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.start-card,
+.question-card,
+.lose-card{
+    width:min(92vw,520px);
+    background:rgba(255,255,255,.94);
+    border-radius:28px;
+    padding:30px 25px;
+    text-align:center;
+    box-shadow:0 20px 70px rgba(60,35,15,.25);
+}
+
+.start-card h1{
+    font-size:clamp(30px,8vw,46px);
+    margin-bottom:20px;
+}
+
+.start-card p{
+    line-height:1.6;
+    margin:8px 0;
+}
+
+.start-btn{
+    margin-top:20px;
+    border:none;
+    background:#76192a;
+    color:white;
+    padding:14px 30px;
+    border-radius:15px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#game{
+    display:none;
+    position:fixed;
+    inset:0;
+}
+
+#timer{
+    position:fixed;
+    top:15px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:30;
+    padding:8px 18px;
+    border-radius:50px;
+    background:rgba(255,255,255,.85);
+    font-size:18px;
+    font-weight:bold;
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+}
+
+#gift{
+    position:absolute;
+    width:155px;
+    height:155px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(1);
+    cursor:pointer;
+    transition:
+        left .4s ease,
+        top .4s ease,
+        transform .3s ease;
+    z-index:5;
+}
+
+/* KUTU */
+
+.box{
+    position:absolute;
+    width:115px;
+    height:90px;
+    left:20px;
+    bottom:15px;
+    border-radius:7px;
+    background:linear-gradient(135deg,#c8324c,#77182c);
+    box-shadow:0 18px 25px rgba(50,20,15,.28);
+}
+
+.box::before{
+    content:"";
+    position:absolute;
+    width:18px;
+    height:100%;
+    left:50%;
+    transform:translateX(-50%);
+    background:#e4b64a;
+}
+
+.box::after{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:18px;
+    top:22px;
+    left:0;
+    background:#e4b64a;
+}
+
+.lid{
+    position:absolute;
+    width:135px;
+    height:32px;
+    left:10px;
+    top:48px;
+    border-radius:7px;
+    background:linear-gradient(135deg,#db455b,#8c1c34);
+    z-index:2;
+    box-shadow:0 7px 12px rgba(50,20,15,.2);
+}
+
+.lid::before{
+    content:"";
+    position:absolute;
+    width:18px;
+    height:100%;
+    left:50%;
+    transform:translateX(-50%);
+    background:#e4b64a;
+}
+
+.bow{
+    position:absolute;
+    left:50%;
+    top:22px;
+    width:55px;
+    height:40px;
+    transform:translateX(-50%);
+    z-index:4;
+}
+
+.bow::before,
+.bow::after{
+    content:"";
+    position:absolute;
+    width:29px;
+    height:22px;
+    border:7px solid #e4b64a;
+    border-radius:50%;
+    top:0;
+}
+
+.bow::before{
+    right:25px;
+    transform:rotate(15deg);
+}
+
+.bow::after{
+    left:25px;
+    transform:rotate(-15deg);
+}
+
+.boom{
+    animation:boom .45s ease;
+}
+
+@keyframes boom{
+    0%{
+        transform:translate(-50%,-50%) scale(var(--scale));
+    }
+
+    45%{
+        transform:translate(-50%,-50%) scale(calc(var(--scale) * 1.12)) rotate(4deg);
+    }
+
+    100%{
+        transform:translate(-50%,-50%) scale(var(--scale));
+    }
+}
+
+/* BOMBA */
+
+#bomb{
+    display:none;
+    position:absolute;
+    width:90px;
+    height:90px;
+    transform:translate(-50%,-50%);
+    z-index:15;
+    cursor:pointer;
+}
+
+.bomb-body{
+    position:absolute;
+    width:58px;
+    height:58px;
+    left:14px;
+    top:23px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 25%,#666,#111 65%);
+    box-shadow:0 10px 20px rgba(0,0,0,.35);
+}
+
+.fuse{
+    position:absolute;
+    left:55px;
+    top:5px;
+    width:25px;
+    height:30px;
+    border-left:4px solid #222;
+    border-radius:50%;
+    transform:rotate(25deg);
+}
+
+.flame{
+    position:absolute;
+    left:72px;
+    top:0;
+    font-size:24px;
+    font-weight:bold;
+    animation:flicker .3s infinite alternate;
+}
+
+@keyframes flicker{
+    to{
+        transform:scale(1.3) rotate(8deg);
+    }
+}
+
+.bomb-number{
+    position:absolute;
+    z-index:3;
+    left:43px;
+    top:42px;
+    transform:translate(-50%,-50%);
+    color:white;
+    font-weight:bold;
+}
+
+/* SORULAR */
+
+#questionOverlay,
+#loseOverlay,
+#finalOverlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+}
+
+#questionOverlay,
+#loseOverlay{
+    background:rgba(25,15,10,.55);
+}
+
+.question-card h2{
+    font-size:22px;
+    line-height:1.4;
+}
+
+.answers{
+    display:grid;
+    gap:10px;
+    margin-top:20px;
+}
+
+.answers button{
+    border:1px solid #ddc9b7;
+    background:white;
+    padding:13px;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.answers button:hover{
+    background:#f7eee5;
+}
+
+#countdown{
+    font-size:48px;
+    font-weight:900;
+    margin-top:20px;
+}
+
+/* KÜÇÜK PRENS SORUSU */
+
+.prince-picture{
+    width:160px;
+    height:105px;
+    margin:15px auto;
+    position:relative;
+}
+
+.snake{
+    position:absolute;
+    width:110px;
+    height:62px;
+    left:25px;
+    top:20px;
+    border:8px solid #a47b52;
+    border-radius:55%;
+    transform:rotate(-7deg);
+}
+
+.snake-head{
+    position:absolute;
+    width:38px;
+    height:34px;
+    left:90px;
+    top:11px;
+    border-radius:50%;
+    background:#a47b52;
+}
+
+.snake-tail{
+    position:absolute;
+    width:45px;
+    height:20px;
+    left:5px;
+    top:68px;
+    border-bottom:8px solid #a47b52;
+    border-radius:50%;
+}
+
+/* FINAL */
+
+#finalOverlay{
+    background:
+        radial-gradient(circle at center,#fff9ec,#f0c97c,#c28b4d);
+    text-align:center;
+}
+
+.final-card{
+    width:min(94vw,850px);
+    animation:finalAppear 1s ease;
+}
+
+@keyframes finalAppear{
+    from{
+        opacity:0;
+        transform:scale(.65);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.final-title{
+    font-size:clamp(35px,9vw,75px);
+    line-height:1.05;
+    font-weight:1000;
+}
+
+.final-complete{
+    margin-top:25px;
+    font-size:20px;
+}
+
+.final-meet{
+    margin-top:18px;
+    font-size:21px;
+    font-weight:bold;
+}
+
+.corner-text{
+    position:fixed;
+    right:7px;
+    bottom:5px;
+    font-size:7px;
+    opacity:.45;
+}
+
+/* CONFETTI */
+
+.confetti{
+    position:fixed;
+    top:-20px;
+    width:8px;
+    height:14px;
+    z-index:100;
+    animation:fall 4s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
+    }
+}
+
+.shake{
+    animation:shake .35s;
+}
+
+@keyframes shake{
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- BAŞLANGIÇ -->
+
+<div id="startScreen" class="screen">
+
+    <div class="start-card">
+
+        <h1>Küçük Bir Oyun</h1>
+
+        <p>Hediye kutusuna tıklaman gerekiyor.</p>
+
+        <p>Bombaya tıklama. Gitmesini bekle.</p>
+
+        <p>Sorular çıktığında cevapla.</p>
+
+        <p>Ve dikkat et...</p>
+
+        <p><b>Ne kadar süreceğini sen de bilmiyorsun.</b></p>
+
+        <button class="start-btn" onclick="startGame()">
+            Başla
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- OYUN -->
+
+<div id="game">
+
+    <div id="timer">
+        02:00
+    </div>
+
+    <div id="gift">
+
+        <div class="bow"></div>
+
+        <div class="lid"></div>
+
+        <div class="box"></div>
+
+    </div>
+
+
+    <!-- BOMBA -->
+
+    <div id="bomb">
+
+        <div class="fuse"></div>
+
+        <div class="flame">•</div>
+
+        <div class="bomb-body"></div>
+
+        <div class="bomb-number" id="bombNumber">
+            5
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SORU -->
+
+<div id="questionOverlay">
+
+    <div class="question-card">
+
+        <div id="questionText"></div>
+
+        <div id="answers" class="answers"></div>
+
+    </div>
+
+</div>
+
+
+<!-- KAYBETME -->
+
+<div id="loseOverlay">
+
+    <div class="lose-card">
+
+        <h2>Oyun bitti.</h2>
+
+        <p style="margin-top:12px">
+            Bombaya tıkladın.
+        </p>
+
+        <button class="start-btn" onclick="restartGame()">
+            Baştan Başla
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div id="finalOverlay">
+
+    <div class="final-card">
+
+        <div class="final-title">
+
+            İYİ Kİ DOĞDUN
+
+            <br>
+
+            ANTİK BORDO BERELİ KUNDUZ BERNA
+
+        </div>
+
+        <div class="final-complete">
+
+            Küçük oyunu başarıyla tamamladın.
+
+        </div>
+
+        <div class="final-meet">
+
+            Haftasonu görüşürüz (umarım)
+
+        </div>
+
+    </div>
+
+    <div class="corner-text">
+
+        BİZİM SİNİSİLİK KURNAZLIK
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   AYARLAR
+============================== */
+
+const OYUN_SURESI = 120;
+
+const BOMBA_IHTIMALI = 0.14;
+
+const SORU_IHTIMALI = 0.10;
+
+
+/* ==============================
+   DEĞİŞKENLER
+============================== */
+
+let gameRunning = false;
+
+let gamePaused = false;
+
+let timeLeft = OYUN_SURESI;
+
+let boxLevel = 0;
+
+let timerInterval;
+
+let bombInterval;
+
+let bombTime = 5;
+
+let audioContext;
+
+let answersData = {};
+
+
+/* ==============================
+   SES SİSTEMİ
+============================== */
+
+function initAudio(){
+
+    if(!audioContext){
+
+        audioContext =
+            new(window.AudioContext ||
+            window.webkitAudioContext)();
+
+    }
+
+    if(audioContext.state === "suspended"){
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+function beep(
+    frequency = 500,
+    duration = .08,
+    type = "sine",
+    volume = .04
+){
+
+    if(!audioContext) return;
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.value =
+        frequency;
+
+    gain.gain.value = volume;
+
+    oscillator.connect(gain);
+
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        audioContext.currentTime + duration
+    );
+
+    oscillator.stop(
+        audioContext.currentTime + duration
+    );
+
+}
+
+
+function boxSound(){
+
+    beep(520,.06,"triangle");
+
+    setTimeout(
+        () => beep(760,.05,"triangle",.025),
+        50
+    );
+
+}
+
+
+function correctSound(){
+
+    beep(620,.08);
+
+    setTimeout(
+        () => beep(880,.12),
+        90
+    );
+
+}
+
+
+function bombSound(){
+
+    beep(100,.2,"sawtooth",.05);
+
+}
+
+
+function finalSound(){
+
+    const notes =
+        [523,659,784,1047];
+
+    notes.forEach(
+        (note,index)=>{
+
+            setTimeout(
+                () => beep(
+                    note,
+                    .2,
+                    "triangle",
+                    .05
+                ),
+                index * 120
+            );
+
+        }
+    );
+
+}
+
+
+/* ==============================
+   ELEMENTLER
+============================== */
+
+const gift =
+    document.getElementById("gift");
+
+const bomb =
+    document.getElementById("bomb");
+
+const bombNumber =
+    document.getElementById("bombNumber");
+
+const timer =
+    document.getElementById("timer");
+
+const game =
+    document.getElementById("game");
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const questionOverlay =
+    document.getElementById("questionOverlay");
+
+const questionText =
+    document.getElementById("questionText");
+
+const answers =
+    document.getElementById("answers");
+
+const loseOverlay =
+    document.getElementById("loseOverlay");
+
+const finalOverlay =
+    document.getElementById("finalOverlay");
+
+
+/* ==============================
+   OYUNU BAŞLAT
+============================== */
+
+function startGame(){
+
+    initAudio();
+
+    startScreen.style.display =
+        "none";
+
+    game.style.display =
+        "block";
+
+    finalOverlay.style.display =
+        "none";
+
+    loseOverlay.style.display =
+        "none";
+
+    resetGame();
+
+}
+
+
+function restartGame(){
+
+    loseOverlay.style.display =
+        "none";
+
+    game.style.display =
+        "block";
+
+    resetGame();
+
+}
+
+
+function resetGame(){
+
+    clearInterval(timerInterval);
+
+    clearInterval(bombInterval);
+
+    gameRunning = true;
+
+    gamePaused = false;
+
+    timeLeft = OYUN_SURESI;
+
+    boxLevel = 0;
+
+    answersData = {};
+
+    bomb.style.display =
+        "none";
+
+    gift.style.display =
+        "block";
+
+    gift.style.left =
+        "50%";
+
+    gift.style.top =
+        "50%";
+
+    gift.style.setProperty(
+        "--scale",
+        "1"
+    );
+
+    gift.style.transform =
+        "translate(-50%,-50%) scale(1)";
+
+    updateTimer();
+
+    timerInterval =
+        setInterval(
+            gameTimer,
+            1000
+        );
+
+}
+
+
+/* ==============================
+   ZAMAN
+============================== */
+
+function gameTimer(){
+
+    if(
+        !gameRunning ||
+        gamePaused
+    ) return;
+
+    timeLeft--;
+
+    updateTimer();
+
+    if(timeLeft <= 0){
+
+        finishGame(false);
+
+    }
+
+}
+
+
+function updateTimer(){
+
+    const minutes =
+        String(
+            Math.floor(timeLeft / 60)
+        ).padStart(2,"0");
+
+    const seconds =
+        String(
+            timeLeft % 60
+        ).padStart(2,"0");
+
+    timer.textContent =
+        minutes + ":" + seconds;
+
+}
+
+
+/* ==============================
+   KUTU
+============================== */
+
+gift.addEventListener(
+    "click",
+    giftClicked
+);
+
+
+function giftClicked(){
+
+    if(
+        !gameRunning ||
+        gamePaused ||
+        bomb.style.display === "block"
+    ) return;
+
+    initAudio();
+
+    boxSound();
+
+    boxLevel++;
+
+    const scale =
+        Math.max(
+            .12,
+            1 - boxLevel / 38
+        );
+
+    gift.style.setProperty(
+        "--scale",
+        scale
+    );
+
+    gift.classList.remove("boom");
+
+    void gift.offsetWidth;
+
+    gift.classList.add("boom");
+
+    gift.style.transform =
+        `translate(-50%,-50%)
+         scale(${scale})
+         rotate(${(boxLevel % 5 - 2) * 2}deg)`;
+
+
+    /* SON KUTU */
+
+    if(boxLevel >= 38){
+
+        setTimeout(
+            () => finishGame(true),
+            500
+        );
+
+        return;
+
+    }
+
+
+    setTimeout(
+        moveGift,
+        80
+    );
+
+
+    setTimeout(
+        randomEvent,
+        450
+    );
+
+}
+
+
+/* ==============================
+   KUTUYU TAŞI
+============================== */
+
+function moveGift(){
+
+    if(!gameRunning) return;
+
+    const width =
+        window.innerWidth;
+
+    const height =
+        window.innerHeight;
+
+    const x =
+        80 +
+        Math.random() *
+        Math.max(
+            50,
+            width - 160
+        );
+
+    const y =
+        110 +
+        Math.random() *
+        Math.max(
+            50,
+            height - 220
+        );
+
+    gift.style.left =
+        x + "px";
+
+    gift.style.top =
+        y + "px";
+
+}
+
+
+/* ==============================
+   RASTGELE OLAY
+============================== */
+
+function randomEvent(){
+
+    if(
+        !gameRunning ||
+        gamePaused
+    ) return;
+
+    const random =
+        Math.random();
+
+
+    if(
+        random < BOMBA_IHTIMALI &&
+        bomb.style.display !== "block"
+    ){
+
+        showBomb();
+
+    }
+
+    else if(
+        random <
+        BOMBA_IHTIMALI + SORU_IHTIMALI
+    ){
+
+        showQuestion();
+
+    }
+
+}
+
+
+/* ==============================
+   BOMBA
+============================== */
+
+function showBomb(){
+
+    const giftRect =
+        gift.getBoundingClientRect();
+
+    bomb.style.left =
+        (
+            giftRect.left +
+            giftRect.width * .7
+        ) + "px";
+
+    bomb.style.top =
+        (
+            giftRect.top +
+            giftRect.height * .2
+        ) + "px";
+
+    bomb.style.display =
+        "block";
+
+    bombTime = 5;
+
+    bombNumber.textContent =
+        bombTime;
+
+    clearInterval(bombInterval);
+
+    bombInterval =
+        setInterval(
+            bombTick,
+            1000
+        );
+
+}
+
+
+function bombTick(){
+
+    bombTime--;
+
+    bombNumber.textContent =
+        bombTime;
+
+    beep(
+        180,
+        .05,
+        "square",
+        .025
+    );
+
+    if(bombTime <= 0){
+
+        clearInterval(bombInterval);
+
+        bomb.style.display =
+            "none";
+
+        beep(
+            300,
+            .08,
+            "triangle"
+        );
+
+    }
+
+}
+
+
+bomb.addEventListener(
+    "click",
+    function(){
+
+        if(!gameRunning) return;
+
+        initAudio();
+
+        bombSound();
+
+        clearInterval(bombInterval);
+
+        gameRunning = false;
+
+        loseOverlay.style.display =
+            "flex";
+
+    }
+);
+
+
+/* ==============================
+   SORULAR
+============================== */
+
+const questions = [
+
+    {
+        id:"colors",
+
+        text:
+        "En sevdiğin 3 rengi 1’den 3’e sırala.",
+
+        options:[
+            "Kırmızı – Mavi – Siyah",
+            "Mavi – Mor – Beyaz",
+            "Sarı – Pembe – Yeşil",
+            "Turuncu – Siyah – Mavi",
+            "Başka bir sıralamam var"
+        ]
+    },
+
+
+    {
+        id:"characters",
+
+        text:
+        "Animasyon, film, dizi, oyun, kitap… fark etmez. En sevdiğin 5 kurgusal karakteri 1’den 5’e sırala.",
+
+        options:[
+            "1. karakter → 2. karakter → 3. karakter → 4. karakter → 5. karakter"
+        ]
+    },
+
+
+    {
+        id:"littlePrince",
+
+        text:
+        "Sence aşağıdaki çizim neyi gösteriyor?",
+
+        special:"prince"
+    },
+
+
+    {
+        id:"number",
+
+        text:
+        "1 ile 10 arasında aklından bir sayı tut.",
+
+        special:"number"
+    }
+
+];
+
+
+function showQuestion(){
+
+    gamePaused = true;
+
+    const question =
+        questions[
+            Math.floor(
+                Math.random() *
+                questions.length
+            )
+        ];
+
+    questionText.innerHTML =
+        `<h2>${question.text}</h2>`;
+
+    answers.innerHTML =
+        "";
+
+    questionOverlay.style.display =
+        "flex";
+
+
+    if(question.special === "number"){
+
+        numberQuestion();
+
+        return;
+
+    }
+
+
+    if(question.special === "prince"){
+
+        princeQuestion();
+
+        return;
+
+    }
+
+
+    question.options.forEach(
+        function(option){
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.textContent =
+                option;
+
+            button.onclick =
+                function(){
+
+                    answersData[
+                        question.id
+                    ] = option;
+
+                    correctSound();
+
+                    closeQuestion();
+
+                };
+
+            answers.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+/* ==============================
+   SAYI ŞAKASI
+============================== */
+
+function numberQuestion(){
+
+    answers.innerHTML =
+        `<div id="countdown">5</div>`;
+
+    let number = 5;
+
+    const countdown =
+        setInterval(
+            function(){
+
+                number--;
+
+                const counter =
+                    document.getElementById(
+                        "countdown"
+                    );
+
+                if(counter){
+
+                    counter.textContent =
+                        number;
+
+                }
+
+                if(number <= 0){
+
+                    clearInterval(
+                        countdown
+                    );
+
+                    questionText.innerHTML =
+                        "<h2>Tuttuğun sayı 7! Doğru bildim mi?</h2>";
+
+                    answers.innerHTML =
+                        "";
+
+                    ["EVET","EVET"].forEach(
+                        function(text){
+
+                            const button =
+                                document.createElement(
+                                    "button"
+                                );
+
+                            button.textContent =
+                                text;
+
+                            button.onclick =
+                                function(){
+
+                                    questionText.innerHTML =
+                                        "<h2>Biliyordum.</h2>";
+
+                                    answers.innerHTML =
+                                        "";
+
+                                    setTimeout(
+                                        closeQuestion,
+                                        650
+                                    );
+
+                                };
+
+                            answers.appendChild(
+                                button
+                            );
+
+                        }
+                    );
+
+                }
+
+            },
+            650
+        );
+
+}
+
+
+/* ==============================
+   KÜÇÜK PRENS
+============================== */
+
+function princeQuestion(){
+
+    const picture =
+        document.createElement(
+            "div"
+        );
+
+    picture.className =
+        "prince-picture";
+
+    picture.innerHTML = `
+
+        <div class="snake"></div>
+
+        <div class="snake-head"></div>
+
+        <div class="snake-tail"></div>
+
+    `;
+
+    questionText.appendChild(
+        picture
+    );
+
+
+    answers.innerHTML =
+        "";
+
+
+    const wrong =
+        document.createElement(
+            "button"
+        );
+
+    wrong.textContent =
+        "Şapka";
+
+
+    const correct =
+        document.createElement(
+            "button"
+        );
+
+    correct.textContent =
+        "Fil yutmuş boa yılanı";
+
+
+    wrong.onclick =
+        function(){
+
+            wrong.classList.add(
+                "shake"
+            );
+
+            beep(
+                180,
+                .12,
+                "square"
+            );
+
+        };
+
+
+    correct.onclick =
+        function(){
+
+            answersData.littlePrince =
+                "Fil yutmuş boa yılanı";
+
+            correctSound();
+
+            closeQuestion();
+
+        };
+
+
+    answers.appendChild(
+        wrong
+    );
+
+    answers.appendChild(
+        correct
+    );
+
+}
+
+
+/* ==============================
+   SORUYU KAPAT
+============================== */
+
+function closeQuestion(){
+
+    questionOverlay.style.display =
+        "none";
+
+    gamePaused = false;
+
+    moveGift();
+
+}
+
+
+/* ==============================
+   OYUN SONU
+============================== */
+
+function finishGame(success){
+
+    clearInterval(
+        timerInterval
+    );
+
+    clearInterval(
+        bombInterval
+    );
+
+    gameRunning = false;
+
+    if(!success){
+
+        game.style.display =
+            "none";
+
+        loseOverlay.style.display =
+            "flex";
+
+        return;
+
+    }
+
+
+    game.style.display =
+        "none";
+
+    finalOverlay.style.display =
+        "flex";
+
+    finalSound();
+
+    createConfetti();
+
+
+    /*
+       Şimdilik cevapları konsola yazıyoruz.
+       Gerçek sistemde buraya veri gönderme
+       sistemi bağlayacağız.
+    */
+
+    console.log(
+        "BEREN'İN CEVAPLARI:",
+        answersData
+    );
+
+}
+
+
+/* ==============================
+   KONFETİ
+============================== */
+
+function createConfetti(){
+
+    for(
+        let i = 0;
+        i < 80;
+        i++
+    ){
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+        piece.className =
+            "confetti";
+
+        piece.style.left =
+            Math.random() * 100 +
+            "vw";
+
+        piece.style.animationDelay =
+            Math.random() * 1.5 +
+            "s";
+
+        piece.style.background =
+            `hsl(
+                ${Math.random()*360},
+                75%,
+                55%
+            )`;
+
+        document.body.appendChild(
+            piece
+        );
+
+        setTimeout(
+            () => piece.remove(),
+            5000
+        );
+
+    }
+
+}
+
+
+/* ==============================
+   EKRAN DEĞİŞİNCE
+============================== */
+
+window.addEventListener(
+    "resize",
+    function(){
+
+        if(
+            gameRunning &&
+            !gamePaused
+        ){
+
+            moveGift();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
